@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamil AI Writing Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>தமிழ் AI எழுத்து உதவியாளர்</h1>
+            <p class="subtitle">Live Tamil Spelling & Grammar Corrector</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <div class="controls">
+                    <div class="mode-toggle">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="liveMode" checked>
+                            <span class="toggle-slider"></span>
+                            Live Correction
+                        </label>
+                    </div>
+                    
+                    <select id="operation" class="operation-select">
+                        <option value="live_grammar">Live Grammar & Spelling</option>
+                        <option value="live_spelling">Live Spelling Only</option>
+                        <option value="tanglish_convert">Tanglish → Tamil Script</option>
+                    </select>
+                    
+                    <button id="processBtn" class="process-btn">Manual Check</button>
+                </div>
+                
+                <div class="text-areas">
+                    <div class="input-area">
+                        <label for="inputText">Type Tamil Text:</label>
+                        <div class="input-container">
+                            <textarea 
+                                id="inputText" 
+                                placeholder="Start typing in Tamil... (Live correction enabled)"
+                                rows="8"
+                            ></textarea>
+                            <div id="liveIndicator" class="live-indicator">● Live</div>
+                        </div>
+                    </div>
+                    
+                    <div class="output-area">
+                        <label for="outputText">Corrected Text:</label>
+                        <textarea 
+                            id="outputText" 
+                            placeholder="Corrected text will appear here..."
+                            rows="8"
+                            readonly
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div id="suggestions" class="suggestions hidden">
+                <h3>Suggestions:</h3>
+                <ul id="suggestionsList"></ul>
+            </div>
+
+            <div class="status" id="status"></div>
+        </main>
+
+        <footer>
+            <p>Powered by AI • Live Tamil Correction</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
