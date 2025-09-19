@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamil AI Assistant</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="popup-container">
+        <header class="popup-header">
+            <h1>தமிழ் AI</h1>
+            <div class="status-indicator" id="statusIndicator">●</div>
+        </header>
+
+        <main class="popup-main">
+            <div class="mode-selector">
+                <label class="mode-option">
+                    <input type="radio" name="mode" value="live_grammar" checked>
+                    <span>Live Grammar</span>
+                </label>
+                <label class="mode-option">
+                    <input type="radio" name="mode" value="live_spelling">
+                    <span>Live Spelling</span>
+                </label>
+                <label class="mode-option">
+                    <input type="radio" name="mode" value="tanglish_convert">
+                    <span>Tanglish → Tamil</span>
+                </label>
+            </div>
+
+            <div class="text-input">
+                <textarea 
+                    id="textInput" 
+                    placeholder="Type Tamil text here..."
+                    rows="4"
+                ></textarea>
+            </div>
+
+            <div class="text-output">
+                <textarea 
+                    id="textOutput" 
+                    placeholder="Corrected text will appear here..."
+                    rows="4"
+                    readonly
+                ></textarea>
+            </div>
+
+            <div class="controls">
+                <button id="correctBtn" class="correct-btn">Correct Text</button>
+                <button id="applyBtn" class="apply-btn" disabled>Apply to Page</button>
+            </div>
+
+            <div class="suggestions" id="suggestions" style="display: none;">
+                <h4>Suggestions:</h4>
+                <ul id="suggestionsList"></ul>
+            </div>
+        </main>
+
+        <footer class="popup-footer">
+            <div class="api-status" id="apiStatus">Checking API...</div>
+        </footer>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
