@@ -2,20 +2,25 @@
     "manifest_version": 3,
     "name": "Tamil AI Writing Assistant",
     "version": "1.0.0",
-    "description": "Live Tamil spelling and grammar correction for web pages",
+    "description": "Live Tamil spelling and grammar correction for web pages - like Gemini but for Tamil!",
     "permissions": [
       "activeTab",
       "storage",
-      "scripting"
+      "scripting",
+      "contextMenus",
+      "sidePanel",
+      "notifications"
     ],
     "host_permissions": [
       "http://localhost:8000/*",
       "https://*/*"
     ],
     "action": {
-      "default_popup": "popup.html",
       "default_title": "Tamil AI Assistant",
       "default_icon": "icons/icon.png"
+    },
+    "side_panel": {
+      "default_path": "sidepanel.html"
     },
     "content_scripts": [
       {
