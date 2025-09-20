@@ -9,8 +9,14 @@ chrome.runtime.onInstalled.addListener((details) => {
 
 // Handle extension icon click
 chrome.action.onClicked.addListener((tab) => {
-    console.log('Extension icon clicked, opening side panel...');
-    chrome.sidePanel.open({ tabId: tab.id });
+    console.log('Extension icon clicked');
+    // For now, just show a notification
+    chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icons/icon.png',
+        title: 'Tamil AI Assistant',
+        message: 'Select Tamil text and right-click to use Grammar Check'
+    });
 });
 
 // Create context menus
@@ -30,7 +36,7 @@ function createContextMenus() {
             console.log('Created main Tamil AI menu');
         });
 
-        // Create submenus - only Grammar and Spelling
+        // Create submenu - Grammar Check
         chrome.contextMenus.create({
             id: 'grammar-check',
             parentId: 'tamil-ai-main',
@@ -40,22 +46,14 @@ function createContextMenus() {
             console.log('Created grammar check menu');
         });
 
+        // Create submenu - Spell Check
         chrome.contextMenus.create({
-            id: 'spelling-check',
+            id: 'spell-check',
             parentId: 'tamil-ai-main',
-            title: 'Spelling Check',
+            title: 'Spell Check',
             contexts: ['selection']
         }, () => {
-            console.log('Created spelling check menu');
-        });
-
-        chrome.contextMenus.create({
-            id: 'open-sidepanel',
-            parentId: 'tamil-ai-main',
-            title: 'Open Tamil AI Panel',
-            contexts: ['selection']
-        }, () => {
-            console.log('Created open sidepanel menu');
+            console.log('Created spell check menu');
         });
     });
 }
@@ -64,10 +62,7 @@ function createContextMenus() {
 chrome.contextMenus.onClicked.addListener((info, tab) => {
     console.log('Context menu clicked:', info.menuItemId);
     
-    if (info.menuItemId === 'open-sidepanel') {
-        console.log('Opening side panel...');
-        chrome.sidePanel.open({ tabId: tab.id });
-    } else if (info.selectionText) {
+    if (info.selectionText) {
         console.log('Processing text with function:', info.menuItemId);
         processTextWithFunction(info.selectionText, info.menuItemId, tab.id);
     }
@@ -79,7 +74,7 @@ async function processTextWithFunction(text, functionId, tabId) {
     
     const operations = {
         'grammar-check': 'live_grammar',
-        'spelling-check': 'live_spelling'
+        'spell-check': 'spell_check'
     };
 
     const operation = operations[functionId];
@@ -148,16 +143,7 @@ async function processTextWithFunction(text, functionId, tabId) {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log('Message received:', request);
     
-    if (request.action === 'textSelected') {
-        // Forward text selection to side panel
-        chrome.runtime.sendMessage({
-            action: 'textSelected',
-            text: request.text
-        }).catch(error => {
-            console.log('Could not forward message to side panel:', error);
-        });
-        sendResponse({ success: true });
-    } else if (request.action === 'checkAPI') {
+    if (request.action === 'checkAPI') {
         fetch('http://localhost:8000/health')
             .then(response => response.json())
             .then(data => {

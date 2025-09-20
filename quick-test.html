@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Tamil Spell Check Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .test-box {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            background: #f9fafb;
+        }
+        
+        .test-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: 'Tamil', 'Noto Sans Tamil', sans-serif;
+            margin: 10px 0;
+        }
+        
+        .test-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .instructions {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+        
+        .status.success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status.error {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .test-words {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .word-item {
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-family: 'Tamil', 'Noto Sans Tamil', sans-serif;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .word-item:hover {
+            background: #f3f4f6;
+            border-color: #3b82f6;
+        }
+        
+        .word-item.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+        
+        .word-item.correct {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+    </style>
+</head>
+<body>
+    <h1>தமிழ் AI எழுத்து உதவியாளர் - Quick Test</h1>
+    
+    <div class="instructions">
+        <h3>📝 Quick Test Instructions:</h3>
+        <ol>
+            <li>Make sure the Tamil AI Chrome extension is loaded</li>
+            <li>Type the test words below in the text area</li>
+            <li>Press <strong>space</strong> after each word</li>
+            <li>Look for tooltips with spelling suggestions</li>
+            <li>Click ✓ to apply corrections</li>
+        </ol>
+    </div>
+    
+    <div class="test-box">
+        <h3>🧪 Test Area</h3>
+        <textarea class="test-input" rows="4" placeholder="Type Tamil words here and press space after each word..."></textarea>
+        
+        <h4>Click to test these words:</h4>
+        <div class="test-words">
+            <div class="word-item incorrect" onclick="insertWord('வநக்கம்')">வநக்கம் (incorrect)</div>
+            <div class="word-item correct" onclick="insertWord('வணக்கம்')">வணக்கம் (correct)</div>
+            <div class="word-item incorrect" onclick="insertWord('போறேன்')">போறேன் (incorrect)</div>
+            <div class="word-item correct" onclick="insertWord('போகிறேன்')">போகிறேன் (correct)</div>
+            <div class="word-item incorrect" onclick="insertWord('செல்றேன்')">செல்றேன் (incorrect)</div>
+            <div class="word-item correct" onclick="insertWord('செல்கிறேன்')">செல்கிறேன் (correct)</div>
+            <div class="word-item incorrect" onclick="insertWord('வர்றேன்')">வர்றேன் (incorrect)</div>
+            <div class="word-item correct" onclick="insertWord('வருகிறேன்')">வருகிறேன் (correct)</div>
+        </div>
+    </div>
+    
+    <div class="test-box">
+        <h3>🔍 Search Test</h3>
+        <input type="text" class="test-input" placeholder="Search in Tamil...">
+    </div>
+    
+    <div class="test-box">
+        <h3>📧 Email Test</h3>
+        <input type="email" class="test-input" placeholder="Email address...">
+    </div>
+    
+    <div class="test-box">
+        <h3>⚙️ Extension Status</h3>
+        <button onclick="checkStatus()">Check Extension Status</button>
+        <div id="status"></div>
+    </div>
+    
+    <script>
+        function insertWord(word) {
+            const textarea = document.querySelector('.test-input');
+            const currentValue = textarea.value;
+            const newValue = currentValue + (currentValue ? ' ' : '') + word + ' ';
+            textarea.value = newValue;
+            textarea.focus();
+            
+            // Trigger input event to simulate typing
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        
+        function checkStatus() {
+            const statusDiv = document.getElementById('status');
+            
+            // Test API connection
+            fetch('http://localhost:8000/health')
+                .then(response => response.json())
+                .then(data => {
+                    statusDiv.innerHTML = '<div class="status success">✅ Backend API Connected</div>';
+                    
+                    // Test spell check
+                    return fetch('http://localhost:8000/process-text', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            text: 'வநக்கம்',
+                            operation: 'spell_check'
+                        })
+                    });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.corrected_text && data.corrected_text.trim() !== 'வநக்கம்') {
+                        statusDiv.innerHTML += '<div class="status success">✅ Spell Check Working</div>';
+                    } else {
+                        statusDiv.innerHTML += '<div class="status error">⚠️ Spell Check Not Working</div>';
+                    }
+                })
+                .catch(error => {
+                    statusDiv.innerHTML = '<div class="status error">❌ Backend Not Connected</div>';
+                });
+        }
+        
+        // Auto-check status on load
+        window.addEventListener('load', () => {
+            setTimeout(checkStatus, 1000);
+        });
+        
+        // Add some debugging
+        document.querySelectorAll('.test-input').forEach(input => {
+            input.addEventListener('input', (e) => {
+                console.log('Input changed:', e.target.value);
+            });
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === ' ') {
+                    console.log('Space pressed, should trigger spell check');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

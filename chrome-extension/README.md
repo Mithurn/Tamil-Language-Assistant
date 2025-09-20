@@ -1,6 +1,6 @@
 # Tamil AI Chrome Extension
 
-A modern Chrome extension for Tamil language assistance with React + Tailwind CSS.
+A modern Chrome extension for Tamil language grammar assistance.
 
 ## 🚀 Quick Start
 

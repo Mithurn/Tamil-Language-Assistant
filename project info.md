@@ -1,42 +1,59 @@
+Project Context: Tamil Language Assistant Chrome Extension
+Overview
 
-Project Name: Your Tamil AI Writing Partner
+This project is a hackathon entry focused on building a comprehensive Tamil language assistant as a Chrome extension. Inspired by the Gemini Chrome extension, it aims to provide seamless language support across all Chrome browsing experiences. The core features include real-time spell checking and grammar checking for Tamil text, with additional tools for text enhancement and processing. All functionalities leverage the Gemini API for AI-powered processing. The goal is to create the best Tamil language assistant, emphasizing usability, efficiency, and integration without disruptive popups.
+The extension operates universally in Chrome when enabled, with outputs primarily displayed in a right-side chat panel similar to the Gemini extension. Inline features like spell check and sentence correction work directly within text fields across websites (e.g., email compose boxes, forms, etc.), while other features appear in the chat panel.
 
-The Problem statement🎯
-To make a Tamil language assistant tool for spell check and grammar
+Core Features:
 
-but that is too basic so we will be adfding new features for sure 
+1. Spell Check
 
-Our Solution ✨
-it is an intelligent, all-in-one AI assistant that makes writing in Tamil seamless and professional. It’s not just a checker; it’s a writing partner that understands context. It provides the confidence to write anything from a quick message to a formal document flawlessly.
+Integration and UI: Simple toolbox integration with a clean, intuitive tooltip UI that aligns aesthetically with the right-side chat panel.
+Behavior:
 
-Key Features
-Advanced Spell & Grammar Correction: Catches complex errors that other tools miss. we can use api to make it easy or any other better ways
-
-Contextual Formality Shifter: The "killer feature." Instantly converts text between casual, spoken Tamil (பேச்சுத்தமிழ்) and professional, written Tamil (செந்தமிழ்).
-
-"Tanglish" to Tamil Conversion: Automatically transliterates Tamil typed with English letters into the correct Tamil script.
-
-Our Hackathon Plan (The Next 24 Hours)
-Our goal is a polished, working demo.
-
-Build the AI Engine: We will create a powerful backend API using Python. This engine will connect to a Large Language Model (like Gemini) to perform all the complex language tasks.
-
-Create the Web App: We will develop a clean and simple web interface (using HTML, CSS, JS) where users can input text and see the AI work its magic in real time ( just till we get the backend working)
-
-Integrate & Perfect: We'll connect the frontend and backend, test thoroughly, and ensure our demo is fast, impressive, and bug-free.
-
-FUTURE PLANS:
-The web app is just the beginning.
-once the backend is done 
-
-we should Integrate this directly into Chrome and other browsers as an extension, providing a side-panel assistant that works on Gmail, Facebook, and more. like in the google gemini chrome extension
+Activates as the user types in any Chrome text field.
+Triggers only after a full word is typed (e.g., upon space or punctuation) to minimize API calls and avoid constant interruptions.
+Displays a tooltip below the misspelled word, suggesting the correct spelling (fetched via Gemini API).
+Tooltip appears once per error and does not reappear unnecessarily.
+User can click the suggested word to auto-replace the incorrect one.
+-let users hover on the text they typed to see the correct word and let them click on the tooltip itself to correc the wrong word that was typed in the text field
 
 
-Expand Features: Add a style guide, a plagiarism checker, and document analysis tools to become the go-to professional writing tool for Tamil.
+Scope: Works globally in Chrome when the extension is active. Optionally, provide a toggle to enable/disable spell check; if not feasible, keep it always on.
+
+2. Grammar Check
+
+Checks grammar for entire sentences or paragraphs.
+Inline correction for whole sentences where applicable (e.g., suggesting fixes directly in text fields).
+Detailed outputs and suggestions appear in the right-side chat panel.
+
+3. Additional Features (Time-Permitting)
+
+Summarize: Condense selected text or paragraphs.
+Translate: Translate Tamil text to/from other languages.
+Voice Bot: Voice-activated assistance for dictation or queries.
+Text Enhancement Tools (planned for later iterations):
+
+Rewrite in formal tone.
+Rewrite to be persuasive.
+Rewrite in friendly tone.
+Improve readability.
+Rephrase.
+Clarify and explain.
+all of these additional features output should appear in the right-side chat panel.
 
 
 
+Technical Details
+
+API Usage: All AI-driven features (spell check, grammar check, summarization, etc.) are powered by the Gemini API to ensure accurate Tamil language handling.
+UI/UX Principles:
+
+No unnecessary popups; all non-inline outputs routed to the right-side chat panel for a non-intrusive experience.
+Inline features (spell check, sentence correction) integrate directly into Chrome's text inputs for real-time assistance.
 
 
+Extension Scope: Designed to function everywhere in Chrome, providing ubiquitous Tamil language support.
 
-
+Goals and Vision
+The project aspires to be the premier Tamil language assistant, empowering users with efficient, AI-enhanced tools for writing, editing, and communicating in Tamil. It prioritizes performance (e.g., optimized API calls), user-friendly design, and expandability for future features. This context can be used as a reference for development, documentation, or integration with other AI systems to maintain consistency.

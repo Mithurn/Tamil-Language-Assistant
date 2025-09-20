@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamil Spell Check Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #374151;
+        }
+        
+        .test-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: 'Tamil', 'Noto Sans Tamil', sans-serif;
+            margin: 10px 0;
+        }
+        
+        .test-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .instructions {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .instructions h4 {
+            margin-top: 0;
+            color: #1e40af;
+        }
+        
+        .test-words {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .test-words h4 {
+            margin-top: 0;
+            color: #166534;
+        }
+        
+        .word-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .word-item {
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-family: 'Tamil', 'Noto Sans Tamil', sans-serif;
+            font-size: 14px;
+        }
+        
+        .correct {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+        
+        .incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+        
+        .status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+        
+        .status.success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status.error {
+            background: #ef4444;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>தமிழ் AI எழுத்து உதவியாளர் - Spell Check Test</h1>
+    
+    <div class="instructions">
+        <h4>📝 Test Instructions:</h4>
+        <ol>
+            <li>Make sure the Tamil AI Chrome extension is loaded and enabled</li>
+            <li>Type Tamil words in the text areas below</li>
+            <li>Press <strong>space</strong> or <strong>punctuation</strong> after each word</li>
+            <li>Look for tooltips with spelling suggestions</li>
+            <li>Click the ✓ button to apply corrections</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h3>📧 Email Compose Test</h3>
+        <p>Type a Tamil email message:</p>
+        <textarea class="test-input" rows="4" placeholder="Type Tamil text here... (e.g., வணக்கம், நான் போறேன்)"></textarea>
+    </div>
+    
+    <div class="test-section">
+        <h3>🔍 Search Box Test</h3>
+        <p>Test spell check in a search input:</p>
+        <input type="text" class="test-input" placeholder="Search in Tamil...">
+    </div>
+    
+    <div class="test-section">
+        <h3>📝 Form Input Test</h3>
+        <p>Test spell check in form fields:</p>
+        <input type="text" class="test-input" placeholder="Name in Tamil...">
+        <input type="email" class="test-input" placeholder="Email...">
+    </div>
+    
+    <div class="test-words">
+        <h4>🧪 Test Words (Try typing these):</h4>
+        <div class="word-list">
+            <div class="word-item incorrect">வநக்கம் (incorrect)</div>
+            <div class="word-item correct">வணக்கம் (correct)</div>
+            <div class="word-item incorrect">போறேன் (incorrect)</div>
+            <div class="word-item correct">போகிறேன் (correct)</div>
+            <div class="word-item incorrect">செல்றேன் (incorrect)</div>
+            <div class="word-item correct">செல்கிறேன் (correct)</div>
+            <div class="word-item incorrect">வர்றேன் (incorrect)</div>
+            <div class="word-item correct">வருகிறேன் (correct)</div>
+            <div class="word-item incorrect">படிக்க்றேன் (incorrect)</div>
+            <div class="word-item correct">படிக்கிறேன் (correct)</div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>🎯 Hover Test</h3>
+        <p>After typing a word and getting a tooltip, try hovering over the word again to see if the tooltip reappears:</p>
+        <textarea class="test-input" rows="3" placeholder="Type a misspelled Tamil word, press space, then hover over it again..."></textarea>
+    </div>
+    
+    <div class="test-section">
+        <h3>⚙️ Extension Status</h3>
+        <p>Check if the extension is working:</p>
+        <button onclick="checkExtensionStatus()">Check Extension Status</button>
+        <div id="extensionStatus"></div>
+    </div>
+    
+    <script>
+        function checkExtensionStatus() {
+            const statusDiv = document.getElementById('extensionStatus');
+            
+            // Try to communicate with the extension
+            if (typeof chrome !== 'undefined' && chrome.runtime) {
+                chrome.runtime.sendMessage('your-extension-id', {action: 'getSpellCheckStatus'}, (response) => {
+                    if (chrome.runtime.lastError) {
+                        statusDiv.innerHTML = '<div class="status error">Extension not found or not loaded</div>';
+                    } else if (response && response.success) {
+                        statusDiv.innerHTML = `<div class="status success">Extension loaded! Spell check: ${response.enabled ? 'Enabled' : 'Disabled'}</div>`;
+                    } else {
+                        statusDiv.innerHTML = '<div class="status error">Extension loaded but spell check not responding</div>';
+                    }
+                });
+            } else {
+                statusDiv.innerHTML = '<div class="status error">Chrome extension API not available</div>';
+            }
+        }
+        
+        // Auto-check extension status on load
+        window.addEventListener('load', () => {
+            setTimeout(checkExtensionStatus, 1000);
+        });
+        
+        // Add some test functionality
+        document.querySelectorAll('.test-input').forEach(input => {
+            input.addEventListener('input', (e) => {
+                console.log('Input changed:', e.target.value);
+            });
+        });
+    </script>
+</body>
+</html>

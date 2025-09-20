@@ -2,8 +2,6 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    popup: './src/popup/index.js',
-    sidepanel: './src/sidepanel/index.js',
     content: './src/content/content.js',
     background: './src/background/background.js'
   },
@@ -20,7 +18,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react']
+            presets: ['@babel/preset-env']
           }
         }
       },

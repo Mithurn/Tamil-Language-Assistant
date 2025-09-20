@@ -1,5 +1,6 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+import { defineConfig } from '@tailwindcss/postcss';
+
+export default defineConfig({
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
     "./dist/**/*.html"
@@ -34,4 +35,4 @@ module.exports = {
   corePlugins: {
     preflight: false, // Disable Tailwind's base styles to avoid conflicts
   }
-}
+});

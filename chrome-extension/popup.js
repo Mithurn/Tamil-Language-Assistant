@@ -1,170 +1,161 @@
-const API_BASE_URL = 'http://localhost:8000';
+// Tamil AI Extension Popup Script
 
-// DOM elements
-const textInput = document.getElementById('textInput');
-const textOutput = document.getElementById('textOutput');
-const correctBtn = document.getElementById('correctBtn');
-const applyBtn = document.getElementById('applyBtn');
-const suggestions = document.getElementById('suggestions');
-const suggestionsList = document.getElementById('suggestionsList');
-const apiStatus = document.getElementById('apiStatus');
-const statusIndicator = document.getElementById('statusIndicator');
-
-// State
-let currentMode = 'live_grammar';
-let correctedText = '';
-
-// Event listeners
-textInput.addEventListener('input', handleInput);
-correctBtn.addEventListener('click', correctText);
-applyBtn.addEventListener('click', applyToPage);
-document.querySelectorAll('input[name="mode"]').forEach(radio => {
-    radio.addEventListener('change', (e) => {
-        currentMode = e.target.value;
-        clearOutput();
-    });
-});
-
-// Handle input with debouncing
-let debounceTimer;
-function handleInput() {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-        if (textInput.value.trim()) {
-            correctText();
-        } else {
-            clearOutput();
+document.addEventListener('DOMContentLoaded', function() {
+    const spellCheckToggle = document.getElementById('spellCheckToggle');
+    const spellCheckStatus = document.getElementById('spellCheckStatus');
+    const spellCheckStatusText = document.getElementById('spellCheckStatusText');
+    const testButton = document.getElementById('testButton');
+    
+    // Load current settings
+    loadSettings();
+    
+    // Set up event listeners
+    spellCheckToggle.addEventListener('click', toggleSpellCheck);
+    testButton.addEventListener('click', testSpellCheck);
+    
+    async function loadSettings() {
+        try {
+            const result = await chrome.storage.sync.get(['spellCheckEnabled']);
+            const enabled = result.spellCheckEnabled !== false; // Default to true
+            
+            updateToggleUI(enabled);
+            updateStatusUI(enabled);
+        } catch (error) {
+            console.error('Error loading settings:', error);
+            updateStatusUI(false, 'Error loading settings');
         }
-    }, 500);
-}
-
-// Clear output
-function clearOutput() {
-    textOutput.value = '';
-    correctedText = '';
-    applyBtn.disabled = true;
-    suggestions.style.display = 'none';
-}
-
-// Correct text
-async function correctText() {
-    const text = textInput.value.trim();
-    if (!text) return;
-
-    correctBtn.disabled = true;
-    correctBtn.textContent = 'Correcting...';
-    statusIndicator.style.background = '#ffc107';
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/process-text`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                text: text,
-                operation: currentMode
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        correctedText = data.corrected_text;
-        textOutput.value = correctedText;
-        applyBtn.disabled = false;
-
-        // Show suggestions if available
-        if (data.suggestions && data.suggestions.length > 0) {
-            showSuggestions(data.suggestions);
-        } else {
-            suggestions.style.display = 'none';
-        }
-
-        statusIndicator.style.background = '#28a745';
-        apiStatus.textContent = 'API Connected';
-        apiStatus.className = 'api-status connected';
-
-    } catch (error) {
-        console.error('Error:', error);
-        textOutput.value = 'Error: Could not connect to API';
-        statusIndicator.style.background = '#dc3545';
-        apiStatus.textContent = 'API Error';
-        apiStatus.className = 'api-status error';
-    } finally {
-        correctBtn.disabled = false;
-        correctBtn.textContent = 'Correct Text';
     }
-}
-
-// Show suggestions
-function showSuggestions(suggestionsArray) {
-    suggestionsList.innerHTML = '';
-    suggestionsArray.forEach(suggestion => {
-        const li = document.createElement('li');
-        li.textContent = suggestion;
-        suggestionsList.appendChild(li);
-    });
-    suggestions.style.display = 'block';
-}
-
-// Apply corrected text to the current page
-async function applyToPage() {
-    if (!correctedText) return;
-
-    try {
-        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    
+    async function toggleSpellCheck() {
+        try {
+            const currentState = spellCheckToggle.classList.contains('active');
+            const newState = !currentState;
+            
+            // Update storage
+            await chrome.storage.sync.set({ spellCheckEnabled: newState });
+            
+            // Update UI
+            updateToggleUI(newState);
+            updateStatusUI(newState);
+            
+            // Send message to content script
+            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            if (tab) {
+                chrome.tabs.sendMessage(tab.id, {
+                    action: 'toggleSpellCheck',
+                    enabled: newState
+                }, (response) => {
+                    if (chrome.runtime.lastError) {
+                        console.log('Could not send message to content script:', chrome.runtime.lastError);
+                    } else {
+                        console.log('Spell check toggled:', response);
+                    }
+                });
+            }
+            
+        } catch (error) {
+            console.error('Error toggling spell check:', error);
+            updateStatusUI(false, 'Error toggling spell check');
+        }
+    }
+    
+    async function testSpellCheck() {
+        testButton.disabled = true;
+        testButton.textContent = 'Testing...';
         
-        await chrome.scripting.executeScript({
-            target: { tabId: tab.id },
-            function: applyTextToPage,
-            args: [correctedText]
-        });
-
-        // Close popup
-        window.close();
-    } catch (error) {
-        console.error('Error applying text:', error);
-        alert('Error applying text to page');
-    }
-}
-
-// Function to inject into the page
-function applyTextToPage(text) {
-    // Find the active input/textarea element
-    const activeElement = document.activeElement;
-    if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
-        activeElement.value = text;
-        activeElement.dispatchEvent(new Event('input', { bubbles: true }));
-    } else {
-        // Fallback: try to find any input/textarea on the page
-        const inputs = document.querySelectorAll('input[type="text"], textarea');
-        if (inputs.length > 0) {
-            inputs[0].value = text;
-            inputs[0].dispatchEvent(new Event('input', { bubbles: true }));
+        try {
+            // Test API connection
+            const response = await fetch('http://localhost:8000/health');
+            if (response.ok) {
+                testButton.textContent = '✅ API Connected';
+                testButton.style.background = '#10b981';
+                
+                // Test spell check endpoint
+                const spellTest = await fetch('http://localhost:8000/process-text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: 'வநக்கம்',
+                        operation: 'spell_check'
+                    })
+                });
+                
+                if (spellTest.ok) {
+                    const data = await spellTest.json();
+                    if (data.corrected_text && data.corrected_text.trim() !== 'வநக்கம்') {
+                        testButton.textContent = '✅ Spell Check Working';
+                    } else {
+                        testButton.textContent = '⚠️ API Working (No Correction)';
+                        testButton.style.background = '#f59e0b';
+                    }
+                } else {
+                    testButton.textContent = '❌ Spell Check Failed';
+                    testButton.style.background = '#ef4444';
+                }
+            } else {
+                testButton.textContent = '❌ API Not Connected';
+                testButton.style.background = '#ef4444';
+            }
+        } catch (error) {
+            console.error('Test failed:', error);
+            testButton.textContent = '❌ Connection Failed';
+            testButton.style.background = '#ef4444';
         }
+        
+        // Reset button after 3 seconds
+        setTimeout(() => {
+            testButton.disabled = false;
+            testButton.textContent = 'Test Spell Check';
+            testButton.style.background = '#3b82f6';
+        }, 3000);
     }
-}
-
-// Check API health on load
-async function checkAPIHealth() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/health`);
-        if (response.ok) {
-            apiStatus.textContent = 'API Connected';
-            apiStatus.className = 'api-status connected';
-            statusIndicator.style.background = '#28a745';
+    
+    function updateToggleUI(enabled) {
+        if (enabled) {
+            spellCheckToggle.classList.add('active');
         } else {
-            throw new Error('API not responding');
+            spellCheckToggle.classList.remove('active');
         }
-    } catch (error) {
-        apiStatus.textContent = 'API Disconnected';
-        apiStatus.className = 'api-status error';
-        statusIndicator.style.background = '#dc3545';
     }
-}
-
-// Initialize
-document.addEventListener('DOMContentLoaded', checkAPIHealth);
+    
+    function updateStatusUI(enabled, customText = null) {
+        if (customText) {
+            spellCheckStatusText.textContent = customText;
+            spellCheckStatus.classList.remove('active');
+        } else {
+            if (enabled) {
+                spellCheckStatus.classList.add('active');
+                spellCheckStatusText.textContent = 'Spell Check Enabled';
+            } else {
+                spellCheckStatus.classList.remove('active');
+                spellCheckStatusText.textContent = 'Spell Check Disabled';
+            }
+        }
+    }
+    
+    // Check extension status on load
+    checkExtensionStatus();
+    
+    async function checkExtensionStatus() {
+        try {
+            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            if (tab) {
+                chrome.tabs.sendMessage(tab.id, {
+                    action: 'getSpellCheckStatus'
+                }, (response) => {
+                    if (chrome.runtime.lastError) {
+                        console.log('Content script not responding:', chrome.runtime.lastError);
+                        updateStatusUI(false, 'Extension not active on this page');
+                    } else if (response && response.success) {
+                        updateToggleUI(response.enabled);
+                        updateStatusUI(response.enabled);
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error checking extension status:', error);
+        }
+    }
+});
