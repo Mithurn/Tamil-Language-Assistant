@@ -10,6 +10,7 @@ const suggestionsList = document.getElementById('suggestionsList');
 const apiStatus = document.getElementById('apiStatus');
 const statusIndicator = document.getElementById('statusIndicator');
 const functionBtns = document.querySelectorAll('.function-btn');
+const tooltipToggle = document.getElementById('tooltipToggle');
 
 // State
 let selectedText = '';
@@ -27,6 +28,7 @@ functionBtns.forEach(btn => {
 
 copyBtn.addEventListener('click', copyResult);
 applyBtn.addEventListener('click', applyToPage);
+tooltipToggle.addEventListener('change', handleTooltipToggle);
 
 // Listen for messages from content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -183,5 +185,47 @@ async function checkAPIHealth() {
     }
 }
 
+// Handle tooltip toggle
+async function handleTooltipToggle() {
+    const enabled = tooltipToggle.checked;
+    
+    try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        
+        await chrome.tabs.sendMessage(tab.id, {
+            action: 'toggleTooltips',
+            enabled: enabled
+        });
+        
+        console.log(`Tooltips ${enabled ? 'enabled' : 'disabled'}`);
+    } catch (error) {
+        console.error('Error toggling tooltips:', error);
+        // Revert toggle if there was an error
+        tooltipToggle.checked = !enabled;
+    }
+}
+
+// Initialize tooltip toggle state
+async function initializeTooltipToggle() {
+    try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        
+        const response = await chrome.tabs.sendMessage(tab.id, {
+            action: 'getTooltipStatus'
+        });
+        
+        if (response && response.success) {
+            tooltipToggle.checked = response.enabled;
+        }
+    } catch (error) {
+        console.log('Could not get tooltip status:', error);
+        // Default to enabled
+        tooltipToggle.checked = true;
+    }
+}
+
 // Initialize
-document.addEventListener('DOMContentLoaded', checkAPIHealth);
+document.addEventListener('DOMContentLoaded', () => {
+    checkAPIHealth();
+    initializeTooltipToggle();
+});
