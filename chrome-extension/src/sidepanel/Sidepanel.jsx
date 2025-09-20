@@ -12,6 +12,7 @@ const Sidepanel = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState('connecting');
   const [currentFunction, setCurrentFunction] = useState('');
+  const [tooltipsEnabled, setTooltipsEnabled] = useState(true);
 
   console.log('Sidepanel component loaded');
 
@@ -162,6 +163,27 @@ const Sidepanel = () => {
     }
   };
 
+  const toggleTooltips = async () => {
+    const newState = !tooltipsEnabled;
+    setTooltipsEnabled(newState);
+    
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: (enabled) => {
+          if (window.tooltipSystem) {
+            window.tooltipSystem.setEnabled(enabled);
+          }
+        },
+        args: [newState]
+      });
+    } catch (error) {
+      console.error('Error toggling tooltips:', error);
+    }
+  };
+
   const handleSendMessage = async (text) => {
     if (!text.trim()) return;
 
@@ -216,7 +238,24 @@ const Sidepanel = () => {
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         <h1 className="text-xl font-bold text-white">தமிழ் AI உதவியாளர்</h1>
-        <StatusIndicator status={apiStatus} />
+        <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-400">Tooltips:</span>
+            <button
+              onClick={toggleTooltips}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                tooltipsEnabled ? 'bg-glow-green' : 'bg-gray-600'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  tooltipsEnabled ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+          <StatusIndicator status={apiStatus} />
+        </div>
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col">

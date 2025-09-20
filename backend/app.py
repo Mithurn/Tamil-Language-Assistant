@@ -110,16 +110,21 @@ async def process_text(request: TextRequest):
         if not request.text.strip():
             raise HTTPException(status_code=400, detail="Text cannot be empty")
         
-        # Get the appropriate prompt based on operation
-        prompt_template = CORRECTION_PROMPTS.get(request.operation)
-        if not prompt_template:
-            raise HTTPException(status_code=400, detail="Invalid operation")
+        # For single words, use a simpler, faster prompt
+        if len(request.text.split()) == 1:
+            # Simplified prompt for single words - much faster
+            simple_prompt = f"Correct this Tamil word for spelling and grammar: {request.text}. Return only the corrected word."
+        else:
+            # Get the appropriate prompt based on operation
+            prompt_template = CORRECTION_PROMPTS.get(request.operation)
+            if not prompt_template:
+                raise HTTPException(status_code=400, detail="Invalid operation")
+            
+            # Create the full prompt
+            simple_prompt = f"{prompt_template}\n\n{request.text}"
         
-        # Create the full prompt
-        full_prompt = f"{prompt_template}\n\n{request.text}"
-        
-        # Call Gemini API
-        corrected_text = call_gemini_api(full_prompt)
+        # Call Gemini API with simplified prompt
+        corrected_text = call_gemini_api(simple_prompt)
         
         # Extract suggestions and errors for live correction
         suggestions = None
@@ -174,6 +179,28 @@ async def test_gemini():
         return {"status": "success", "message": "Gemini API is working", "test_result": result}
     except Exception as e:
         return {"status": "error", "message": f"Gemini API test failed: {str(e)}"}
+
+class QuickCheckRequest(BaseModel):
+    text: str
+
+@app.post("/quick-check")
+async def quick_check(request: QuickCheckRequest):
+    """Fast endpoint for single word checking"""
+    try:
+        if not request.text.strip():
+            raise HTTPException(status_code=400, detail="Text cannot be empty")
+        
+        # Very simple prompt for maximum speed
+        simple_prompt = f"Correct Tamil word: {request.text}. Return only corrected word."
+        corrected_text = call_gemini_api(simple_prompt)
+        
+        return {
+            "original": request.text,
+            "corrected": corrected_text,
+            "has_error": corrected_text != request.text
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
