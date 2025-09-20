@@ -17,21 +17,22 @@
     ],
     "action": {
       "default_title": "Tamil AI Assistant",
-      "default_icon": "icons/icon.png"
+      "default_icon": "icons/icon.png",
+      "default_popup": "dist/popup.html"
     },
     "side_panel": {
-      "default_path": "sidepanel.html"
+      "default_path": "dist/sidepanel-simple.html"
     },
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
-        "js": ["content.js"],
+        "js": ["dist/content.js"],
         "css": ["content.css"],
         "run_at": "document_end"
       }
     ],
     "background": {
-      "service_worker": "background.js"
+      "service_worker": "dist/background.js"
     },
     "icons": {
       "16": "icons/icon.png",

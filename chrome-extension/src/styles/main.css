@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  * {
+    font-family: 'Inter', sans-serif;
+  }
+  
+  body {
+    @apply bg-dark-bg text-white;
+  }
+}
+
+@layer components {
+  .glow-card {
+    @apply bg-dark-card border border-gray-700 rounded-xl p-4 shadow-lg;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+  }
+  
+  .glow-button {
+    @apply bg-gradient-to-r from-glow-green to-glow-blue text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+  }
+  
+  .glow-button:hover {
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
+    transform: translateY(-1px);
+  }
+  
+  .chat-bubble-user {
+    @apply bg-gradient-to-r from-glow-green to-glow-blue text-white rounded-2xl rounded-br-md p-3 max-w-xs ml-auto;
+  }
+  
+  .chat-bubble-ai {
+    @apply bg-dark-card border border-gray-700 text-white rounded-2xl rounded-bl-md p-3 max-w-xs;
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.1);
+  }
+  
+  .input-field {
+    @apply bg-dark-card border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-glow-green focus:outline-none transition-all duration-300;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.05);
+  }
+  
+  .input-field:focus {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+  }
+}
