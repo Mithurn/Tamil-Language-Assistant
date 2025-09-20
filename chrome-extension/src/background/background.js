@@ -104,7 +104,7 @@ async function processTextWithFunction(text, functionId, tabId) {
             try {
                 await chrome.scripting.executeScript({
                     target: { tabId: tabId },
-                    files: ['content.js']
+                    files: ['dist/content.js']
                 });
                 console.log('Content script injected successfully');
                 
@@ -156,14 +156,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-// Handle tab updates
+// Handle tab updates - but don't inject automatically since manifest handles it
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    // Content script is automatically injected via manifest
+    // This listener is kept for potential future use
     if (changeInfo.status === 'complete' && tab.url) {
-        chrome.scripting.executeScript({
-            target: { tabId: tabId },
-            files: ['content.js']
-        }).catch(error => {
-            console.log('Could not inject content script:', error);
-        });
+        console.log('Tab updated:', tab.url);
     }
 });

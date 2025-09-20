@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamil AI Extension - Clean Reload Instructions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .step {
+            background: #e3f2fd;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+        }
+        .warning {
+            background: #fff3e0;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ff9800;
+        }
+        .success {
+            background: #e8f5e8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+        }
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .button {
+            background: #2196f3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Tamil AI Extension - Clean Reload</h1>
+        
+        <div class="warning">
+            <h3>⚠️ Current Issue</h3>
+            <p>You're seeing "Extension context invalidated" errors because the extension was reloaded while running. This is normal during development but needs a clean restart.</p>
+        </div>
+
+        <h2>📋 Clean Reload Steps</h2>
+        
+        <div class="step">
+            <h3>Step 1: Close All Gmail/Chrome Tabs</h3>
+            <p>Close all tabs that have the Tamil AI extension running (especially Gmail tabs). This ensures no old content scripts are running.</p>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Reload Extension</h3>
+            <ol>
+                <li>Go to <code>chrome://extensions/</code></li>
+                <li>Find "Tamil AI Writing Assistant"</li>
+                <li>Click the <strong>reload button (🔄)</strong> on the extension card</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Clear Browser Console</h3>
+            <p>Press <code>F12</code> to open Developer Tools, then click the <strong>Clear Console</strong> button (🗑️) to remove all old error messages.</p>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Open Fresh Gmail Tab</h3>
+            <p>Open a new Gmail tab. The extension should now work properly without context errors.</p>
+        </div>
+
+        <div class="step">
+            <h3>Step 5: Test Extension</h3>
+            <ol>
+                <li>Click the Tamil AI extension icon in the toolbar</li>
+                <li>Click "Test Spell Check" - should show "✅ Spell Check Working"</li>
+                <li>Try typing in Gmail compose: <code>வநக்கம் </code> (with space)</li>
+                <li>You should see a correction tooltip</li>
+            </ol>
+        </div>
+
+        <div class="success">
+            <h3>✅ Expected Result</h3>
+            <p>After following these steps, you should see:</p>
+            <ul>
+                <li>No "Extension context invalidated" errors in console</li>
+                <li>Extension popup shows "Spell Check Enabled" with green toggle</li>
+                <li>Typing Tamil text in Gmail shows correction tooltips</li>
+                <li>Console shows "Tamil AI Extension: Content script loaded" (only once)</li>
+            </ul>
+        </div>
+
+        <h2>🐛 If Still Not Working</h2>
+        
+        <div class="warning">
+            <h3>Debug Steps</h3>
+            <p>If the extension still doesn't work after clean reload:</p>
+            <ol>
+                <li>Open Gmail and press <code>F12</code></li>
+                <li>Go to Console tab</li>
+                <li>Paste this code and press Enter:</li>
+            </ol>
+            <code style="display: block; padding: 10px; margin: 10px 0;">
+                console.log('Extension loaded:', window.tamilAIExtensionLoaded);<br>
+                console.log('Inputs found:', document.querySelectorAll('input, textarea, [contenteditable]').length);
+            </code>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="button" onclick="window.open('chrome://extensions/', '_blank')">Open Extensions Page</button>
+            <button class="button" onclick="window.open('https://mail.google.com', '_blank')">Open Gmail</button>
+        </div>
+    </div>
+</body>
+</html>
