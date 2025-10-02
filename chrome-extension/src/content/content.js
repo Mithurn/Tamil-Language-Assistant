@@ -52,7 +52,13 @@ if (window.tamilAIExtensionLoaded) {
                     if (mutation.type === 'childList') {
                         mutation.addedNodes.forEach((node) => {
                             if (node.nodeType === Node.ELEMENT_NODE) {
-                                const inputs = node.querySelectorAll('input[type="text"], input[type="email"], input[type="search"], textarea, [contenteditable="true"]');
+                                // Check if the node itself is an input
+                                if (this.isInputElement(node)) {
+                                    this.setupInputListener(node);
+                                }
+                                
+                                // Check for inputs within the node
+                                const inputs = node.querySelectorAll('input[type="text"], input[type="email"], input[type="search"], input[type="password"], textarea, [contenteditable="true"]');
                                 inputs.forEach(input => this.setupInputListener(input));
                             }
                         });
@@ -66,8 +72,22 @@ if (window.tamilAIExtensionLoaded) {
             });
 
             // Setup existing inputs
-            document.querySelectorAll('input[type="text"], input[type="email"], input[type="search"], textarea, [contenteditable="true"]')
+            document.querySelectorAll('input[type="text"], input[type="email"], input[type="search"], input[type="password"], textarea, [contenteditable="true"]')
                 .forEach(input => this.setupInputListener(input));
+            
+            console.log('Event listeners setup complete. Found', document.querySelectorAll('input, textarea, [contenteditable]').length, 'input elements');
+        }
+
+        isInputElement(node) {
+            const tagName = node.tagName ? node.tagName.toLowerCase() : '';
+            const contentEditable = node.contentEditable === 'true';
+            
+            if (tagName === 'input') {
+                const type = node.type ? node.type.toLowerCase() : 'text';
+                return ['text', 'email', 'search', 'password'].includes(type);
+            }
+            
+            return tagName === 'textarea' || contentEditable;
         }
 
         setupInputListener(input) {
@@ -773,14 +793,19 @@ if (window.tamilAIExtensionLoaded) {
 
     // Listen for messages from background script
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        if (request.action === 'showResult') {
-            showResultPopup(request.originalText, request.correctedText, request.function);
-            sendResponse({ success: true });
-        } else if (request.action === 'toggleSpellCheck') {
-            tamilSpellCheckSystem.setEnabled(request.enabled);
-            sendResponse({ success: true, enabled: tamilSpellCheckSystem.enabled });
-        } else if (request.action === 'getSpellCheckStatus') {
-            sendResponse({ success: true, enabled: tamilSpellCheckSystem.enabled });
+        try {
+            if (request.action === 'showResult') {
+                showResultPopup(request.originalText, request.correctedText, request.function);
+                sendResponse({ success: true });
+            } else if (request.action === 'toggleSpellCheck') {
+                tamilSpellCheckSystem.setEnabled(request.enabled);
+                sendResponse({ success: true, enabled: tamilSpellCheckSystem.enabled });
+            } else if (request.action === 'getSpellCheckStatus') {
+                sendResponse({ success: true, enabled: tamilSpellCheckSystem.enabled });
+            }
+        } catch (error) {
+            console.log('Extension context invalidated - this is normal during development');
+            sendResponse({ success: false, error: 'Extension context invalidated' });
         }
     });
 }
