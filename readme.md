@@ -94,6 +94,71 @@ The extension uses advanced natural language processing to:
 3. **Generate Suggestions** - Provides accurate correction recommendations
 4. **Apply Corrections** - Allows instant application of suggested fixes
 
+## 🏛️ Architecture
+
+```mermaid
+graph TB
+    subgraph "Browser Layer"
+        A[Chrome Browser] --> B[Extension Popup]
+        A --> C[Content Scripts]
+        A --> D[Background Script]
+    end
+    
+    subgraph "Extension Core"
+        B --> E[User Interface]
+        C --> F[Text Detection]
+        C --> G[DOM Monitoring]
+        D --> H[Message Handler]
+        D --> I[Storage Manager]
+    end
+    
+    subgraph "AI Processing"
+        J[Natural Language Processor] --> K[Tamil Text Analyzer]
+        K --> L[Context Engine]
+        L --> M[Correction Algorithm]
+        M --> N[Suggestion Generator]
+    end
+    
+    subgraph "Data Storage"
+        O[Chrome Storage] --> P[User Preferences]
+        O --> Q[Correction History]
+        R[Local Database] --> S[Tamil Grammar Rules]
+        R --> T[Spelling Dictionary]
+    end
+    
+    subgraph "Website Integration"
+        U[Gmail] --> V[Email Fields]
+        W[WhatsApp Web] --> X[Chat Input]
+        Y[Social Media] --> Z[Post Fields]
+        AA[Any Website] --> BB[Text Areas]
+    end
+    
+    F --> J
+    G --> K
+    H --> O
+    I --> R
+    J --> S
+    K --> T
+    
+    V --> C
+    X --> C
+    Z --> C
+    BB --> C
+    
+    style A fill:#4285F4
+    style J fill:#FF6B6B
+    style O fill:#4CAF50
+    style R fill:#FF9800
+```
+
+### **System Components**
+
+- **Browser Layer**: Chrome extension architecture with popup, content scripts, and background processes
+- **Extension Core**: Text detection, DOM monitoring, message handling, and storage management
+- **AI Processing**: Natural language processing, Tamil text analysis, context understanding, and correction algorithms
+- **Data Storage**: Chrome storage for user preferences and local database for Tamil language rules
+- **Website Integration**: Universal compatibility across Gmail, WhatsApp Web, social media, and any website
+
 ## Installation
 
 ### From Chrome Web Store
