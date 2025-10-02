@@ -188,12 +188,15 @@ If you like this extension and find it helpful, consider:
 - [Instagram Analytics Dashboard](https://github.com/Mithurn/instagram-profile-webscraper) - Comprehensive Instagram analytics system
 - [More Projects](https://github.com/Mithurn) - Check out my other projects on GitHub
 
-## License
+## 📄 License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-> [mithurnjeromme.vercel.app](https://mithurnjeromme.vercel.app) &nbsp;&middot;&nbsp;
-> GitHub [@Mithurn](https://github.com/Mithurn) &nbsp;&middot;&nbsp;
-> LinkedIn [@Mithurn Jeromme](https://www.linkedin.com/in/mithurn-jeromme-s-k/)
+
+- 🌐 **Website**: [mithurnjeromme.vercel.app](https://mithurnjeromme.vercel.app)
+- 💼 **LinkedIn**: [linkedin.com/in/mithurn-jeromme-s-k](https://www.linkedin.com/in/mithurn-jeromme-s-k/)
+- 🐙 **GitHub**: [github.com/Mithurn](https://github.com/Mithurn)
+- 📧 **Email**: mithurnjeromme172@gmail.com
+- 🐦 **Twitter**: [@Mithurn_Jeromme](https://x.com/Mithurn_Jeromme)
